@@ -1,10 +1,28 @@
-project(VSXuWidget)
-cmake_minimum_required(VERSION 2.6)
-find_package(Qt4 REQUIRED)
+cmake_minimum_required(VERSION 2.8)
 
-include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
+PROJECT(VSXuWidget)
 
-set(VSXuWidget_SRCS VSXuWidget.cpp main.cpp)
-qt4_automoc(${VSXuWidget_SRCS})
-add_executable(VSXuWidget ${VSXuWidget_SRCS})
-target_link_libraries(VSXuWidget ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+FIND_PACKAGE (Qt4 REQUIRED)
+FIND_PACKAGE (OpenGL REQUIRED)
+SET(QT_USE_QTOPENGL TRUE)
+
+
+# We can now use pkg-config to find the VSXu libs.
+FIND_PACKAGE(PkgConfig)
+pkg_check_modules(VSXu REQUIRED libvsxu)
+
+INCLUDE_DIRECTORIES (${VSXu_INCLUDE_DIRS})
+INCLUDE( ${QT_USE_FILE} )
+
+SET(VSXuWIDGET_SRCS main.cpp VSXuWidget.cpp)
+
+#This is for the Qt MOC
+SET(QT_WRAP_CPP TRUE)
+SET(MOCHEADER VSXuWidget.h)
+QT4_WRAP_CPP(MOCFILES ${MOCHEADER})
+
+LINK_DIRECTORIES(${VSXu_LIBRARY_DIRS})
+ADD_EXECUTABLE(VSXuWidget ${VSXuWIDGET_SRCS} ${MOCFILES})
+TARGET_LINK_LIBRARIES(VSXuWidget ${QT_LIBRARIES} ${OPENGL_LIBRARY} ${VSXu_LIBRARIES})
+
+#INSTALL_TARGETS( /bin GLWidget)
