@@ -34,7 +34,7 @@ void VSXuWidget::initializeGL()
   m_manager = manager_factory();
   // init manager with the shared path and sound input type.
   // manual sound injection: manager->init( path.c_str() , "media_player");
-  m_manager->init("/home/dinesh/kde/inst/master/share/vsxu" , "pulseaudio");
+  m_manager->init( 0 , "pulseaudio");
   
   glEnable(GL_BLEND);
   glEnable(GL_POLYGON_SMOOTH);
