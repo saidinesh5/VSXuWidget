@@ -1,5 +1,5 @@
 #include <QDebug>
-
+#include <GL/glu.h>
 #include "VSXuWidget.h"
 
 VSXuWidget::VSXuWidget(QWidget *parent):
