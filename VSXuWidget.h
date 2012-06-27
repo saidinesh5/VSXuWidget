@@ -33,7 +33,6 @@ Q_OBJECT
 private:
     VSXuRenderer m_renderer;
     QStringList m_visuals;
-    // We need float samples of 512 bytes each
     float soundData[512];
 
 protected:
@@ -45,8 +44,8 @@ public:
     VSXuWidget(QWidget *parent = NULL);
     ~VSXuWidget();
     /**
-     * Inject 512 wave samples of sound data meant to be Visualized
-     * 
+     * Inject 512 samples of wave data (ranging from -1.0 to 1.0)
+     * for VSXu to analyse it for the next render cycle
      */
     void injectSound(float soundData[]){
         m_renderer.injectSound(soundData);

@@ -33,8 +33,8 @@ class VSXuRenderer: public QThread
     VSXuWidget *m_widget;
     bool m_isRunning, m_doResize;
     int m_width,m_height;
-    float m_soundData[500];
-    
+    float m_soundData[512];
+
     //The Main Loop for VSXu Renderer
     void run();
 public:
