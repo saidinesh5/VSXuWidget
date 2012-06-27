@@ -1,5 +1,5 @@
 /*
-    Le standard main file
+    The Rendering Thread doing the main VSXu Rendering
     Copyright (C) 2012  Dinesh Manajipet <saidinesh5@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -18,20 +18,31 @@
 */
 
 
-#include <QtGui/QApplication>
-#include "VSXuWidget.h"
-#ifdef Q_WS_X11
-    #include <X11/Xlib.h>
-#endif
+#ifndef VSXURENDERER_H
+#define VSXURENDERER_H
 
-int main(int argc, char** argv)
+#include <QThread>
+#include <vsx_manager.h>
+
+class VSXuWidget;
+class VSXuRenderer: public QThread
 {
-    #ifdef Q_WS_X11
-        XInitThreads();
-    #endif
+  Q_OBJECT
+  
+    vsx_manager_abs *m_manager;
+    VSXuWidget *m_widget;
+    bool m_isRunning, m_doResize;
+    int m_width,m_height;
+    float m_soundData[500];
+    
+    //The Main Loop for VSXu Renderer
+    void run();
+public:
+    VSXuRenderer(VSXuWidget* parent);
+    ~VSXuRenderer();
+    void injectSound(float soundData[]);
+    void stop(){ m_isRunning = false;}
+    void resize(int w, int h);
+};
 
-    QApplication app(argc, argv);
-    VSXuWidget foo;
-    foo.show();
-    return app.exec();
-}
+#endif // VSXURENDERER_H
