@@ -1,69 +1,43 @@
-#include <QDebug>
-#include <GL/glu.h>
+/*
+    The QGLWidget based VSXuWidget class, ready to be embeddable in any QtGUI
+    Copyright (C) 2012  Dinesh Manajipet <saidinesh5@gmail.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+
 #include "VSXuWidget.h"
+#include "VSXuRenderer.h"
 
 VSXuWidget::VSXuWidget(QWidget *parent):
   QGLWidget(parent),
-  m_isActive(true)
+  m_renderer(this)
 {
-  setWindowTitle("Vovoid VSXu");
-  m_timer = new QTimer(this);
-  connect (m_timer , SIGNAL(timeout()), this, SLOT(update()));
+    setWindowTitle("Vovoid VSXu");
+    setAutoBufferSwap(false);
+    m_renderer.start();
 }
 
-void VSXuWidget::injectSound(float soundData[])
+void VSXuWidget::resizeEvent(QResizeEvent *event)
 {
-  /* uncomment for manual sound injection
-  for (unsigned long i = 0; i < 512; i++)
-  {
-    sound_wave_test[i] = (float)(rand()%65535-32768)*(1.0f/32768.0f);
-  }
-  for (unsigned long i = 0; i < 512; i++)
-  {
-    sound_freq_test[i] = (float)(rand()%65535)*(1.0f/65535.0f);
-  }
-  manager->set_sound_freq(&sound_freq_test[0]);
-  manager->set_sound_wave(&sound_wave_test[0]);
-  */
-
-  updateGL();
+    QSize s = event->size();
+    m_renderer.resize(s.width(),s.height());
 }
-
-void VSXuWidget::initializeGL()
-{
-  m_manager = manager_factory();
-  // init manager with the shared path and sound input type.
-  // manual sound injection: manager->init( path.c_str() , "media_player");
-  m_manager->init( 0 , "pulseaudio");
-  
-  glEnable(GL_BLEND);
-  glEnable(GL_POLYGON_SMOOTH);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glClearColor(0, 0, 0, 0);
-  
-  glViewport( 0, 0, width(), height());
-  
-  
-  m_timer->start(20);
-}
-
-
-void VSXuWidget::paintGL()
-{
-  if (m_isActive){
-    glViewport(0, 0, m_width, m_height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, m_width, 0, m_height); // set origin to bottom left corner
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if (m_manager)
-      m_manager->render();
-  }
-}
-
 
 VSXuWidget::~VSXuWidget()
-{}
+{
+    m_renderer.stop();
+    m_renderer.wait();
+}
