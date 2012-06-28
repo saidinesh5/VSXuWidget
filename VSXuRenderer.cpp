@@ -55,14 +55,21 @@ void VSXuRenderer::run()
 {
     m_widget->makeCurrent();
     // init manager with the shared path and sound input type.
-    m_manager = manager_factory();
-    m_manager->init(0,"pulseaudio");
-    //for manual sound injection, use: manager->init( path.c_str() , "media_player");  
+    //HACK: Waiting till the QGLWidget has been actually created
+    msleep(20);
+
     glEnable(GL_BLEND);
     glEnable(GL_POLYGON_SMOOTH);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_widget->doneCurrent();
+    // A nice black screen till VSXu actually loads itself
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    m_manager = manager_factory();
+    m_manager->init(0,"pulseaudio");
+    //for manual sound injection, use: manager->init( path.c_str() , "media_player");  
+    m_widget->swapBuffers();
 
     while (m_isRunning){
       m_widget->makeCurrent();
@@ -77,7 +84,7 @@ void VSXuRenderer::run()
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
       if(m_manager)
           m_manager->render();
       m_widget->swapBuffers();
