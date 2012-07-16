@@ -73,6 +73,12 @@ void VSXuRenderer::run()
     m_widget->swapBuffers();
 
     while (m_isRunning){
+      if(!m_isActive){
+        //Saving CPU cycles when not active
+        //Just to not flood the system with too many rendering calls.
+        msleep(10);
+        continue;
+      }
       m_widget->makeCurrent();
       if (m_doResize){
           glViewport(0, 0, m_width, m_height);
@@ -86,12 +92,10 @@ void VSXuRenderer::run()
       glLoadIdentity();
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      if(m_manager && m_isActive)
+      if(m_manager)
           m_manager->render();
       m_widget->swapBuffers();
-      //Just to not flood the system with too many rendering calls.
       //Although this probably can be removed as swapBuffers would block in most drivers
-      msleep(10);
     //m_widget->doneCurrent();
   }
 }
