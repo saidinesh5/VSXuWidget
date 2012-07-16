@@ -26,6 +26,7 @@ VSXuRenderer::VSXuRenderer(VSXuWidget* parent):
   m_manager(0),
   m_isRunning(true),
   m_doResize(true),
+  m_isActive(true),
   m_width(640),
   m_height(480)
 {
@@ -85,7 +86,7 @@ void VSXuRenderer::run()
       glLoadIdentity();
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      if(m_manager)
+      if(m_manager && m_isActive)
           m_manager->render();
       m_widget->swapBuffers();
       //Just to not flood the system with too many rendering calls.

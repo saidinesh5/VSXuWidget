@@ -39,7 +39,9 @@ protected:
     void resizeEvent(QResizeEvent* event);
     //Will be taken Care by the Rendering thread
     void paintEvent(QPaintEvent* ){;}
-  
+    void hideEvent(){ m_renderer.deactivate(); }
+    void showEvent(){ m_renderer.activate(); }
+
 public:
     VSXuWidget(QWidget *parent = NULL);
     ~VSXuWidget();

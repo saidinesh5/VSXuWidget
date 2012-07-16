@@ -31,7 +31,7 @@ class VSXuRenderer: public QThread
   
     vsx_manager_abs *m_manager;
     VSXuWidget *m_widget;
-    bool m_isRunning, m_doResize;
+    bool m_isRunning, m_doResize, m_isActive;
     int m_width,m_height;
     float m_soundData[512];
 
@@ -40,9 +40,11 @@ class VSXuRenderer: public QThread
 public:
     VSXuRenderer(VSXuWidget* parent);
     ~VSXuRenderer();
-    void injectSound(float soundData[]);
+    void deactivate(){ m_isActive = false; }
+    void activate(){ m_isActive = true; }
     void stop(){ m_isRunning = false;}
     void resize(int w, int h);
+    void injectSound(float soundData[]);
 };
 
 #endif // VSXURENDERER_H
