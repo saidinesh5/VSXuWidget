@@ -41,8 +41,8 @@ protected:
     void resizeEvent(QResizeEvent* event);
     //Will be taken Care by the Rendering thread
     void paintEvent(QPaintEvent* ){;}
-    void hideEvent(QShowEvent *e){ m_renderer.deactivate(); }
-    void showEvent(QHideEvent *e){ m_renderer.activate(); }
+    void hideEvent(QHideEvent *e){ m_renderer.deactivate(); }
+    void showEvent(QShowEvent *e){ m_renderer.activate(); }
 
 public:
     VSXuWidget(QWidget *parent = NULL);
