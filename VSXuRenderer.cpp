@@ -54,10 +54,10 @@ void VSXuRenderer::injectSound(float soundData[])
 
 void VSXuRenderer::run()
 {
-    m_widget->makeCurrent();
-    // init manager with the shared path and sound input type.
     //HACK: Waiting till the QGLWidget has been actually created
     msleep(20);
+    // init manager with the shared path and sound input type.
+    m_widget->makeCurrent();
 
     glEnable(GL_BLEND);
     glEnable(GL_POLYGON_SMOOTH);
@@ -95,7 +95,6 @@ void VSXuRenderer::run()
       if(m_manager)
           m_manager->render();
       m_widget->swapBuffers();
-      //Although this probably can be removed as swapBuffers would block in most drivers
     //m_widget->doneCurrent();
   }
 }
