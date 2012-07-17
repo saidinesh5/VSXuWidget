@@ -17,6 +17,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <vector>
+#include <string>
+
+#include <QFileInfo>
+
 #include <GL/glu.h>
 #include "VSXuRenderer.h"
 #include "VSXuWidget.h"
@@ -32,6 +37,21 @@ VSXuRenderer::VSXuRenderer(VSXuWidget* parent):
 {
 
 }
+
+QStringList VSXuRenderer::getVisuals()
+{
+  QStringList result;
+  if(!m_manager)
+    return result;
+  
+  std::vector<std::string> visuals = m_manager->get_visual_filenames();
+  for(std::vector<std::string>::iterator it = visuals.begin(); it < visuals.end() ; it++){
+    result<< QFileInfo( QString::fromStdString(*it)).fileName().replace(".vsx","");
+  }
+
+  return result;
+}
+
 
 void VSXuRenderer::resize(int w, int h)
 {
@@ -69,7 +89,7 @@ void VSXuRenderer::run()
 
     m_manager = manager_factory();
     m_manager->init(0,"pulseaudio");
-    //for manual sound injection, use: manager->init( path.c_str() , "media_player");  
+    //for manual sound injection, use: manager->init( path.c_str() , "media_player");
     m_widget->swapBuffers();
 
     while (m_isRunning){
@@ -101,6 +121,7 @@ void VSXuRenderer::run()
 
 VSXuRenderer::~VSXuRenderer()
 {
+    stop();
     if(m_manager)
         manager_destroy(m_manager);
 }

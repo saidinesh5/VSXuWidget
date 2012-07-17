@@ -21,6 +21,8 @@
 #ifndef VSXURENDERER_H
 #define VSXURENDERER_H
 
+#include <QStringList>
+#include <QString>
 #include <QThread>
 #include <vsx_manager.h>
 
@@ -43,6 +45,23 @@ public:
     void deactivate(){ m_isActive = false; }
     void activate(){ m_isActive = true; }
     void stop(){ m_isRunning = false;}
+
+    void nextVisual(){ if(m_manager)m_manager->next_visual(); }
+    void prevVisual(){ if(m_manager)m_manager->prev_visual(); }
+
+    bool getRandomizerStatus(){ if(m_manager)m_manager->get_randomizer_status(); }
+    void setRandomizer(bool value){ if(m_manager)m_manager->set_randomizer(value); }
+
+    float getFXLevel(){ if(m_manager)m_manager->get_fx_level(); }
+    void increaseFXLevel(){ if(m_manager)m_manager->inc_fx_level(); }
+    void decreaseFXLevel(){ if(m_manager)m_manager->dec_fx_level(); }
+
+    float getSpeed(){ if(m_manager)m_manager->get_speed();}
+    void increaseSpeed(){ if(m_manager)m_manager->inc_speed();}
+    void decreaseSpeed(){ if(m_manager)m_manager->dec_speed();}
+
+    QStringList getVisuals();
+
     void resize(int w, int h);
     void injectSound(float soundData[]);
 };
