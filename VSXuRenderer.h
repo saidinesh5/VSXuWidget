@@ -39,6 +39,8 @@ class VSXuRenderer: public QThread
 
     //The Main Loop for VSXu Renderer
     void run();
+    void drawSplashScreen();
+
 public:
     VSXuRenderer(VSXuWidget* parent);
     ~VSXuRenderer();

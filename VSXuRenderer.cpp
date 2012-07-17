@@ -21,6 +21,7 @@
 #include <string>
 
 #include <QFileInfo>
+#include <QImage>
 
 #include <GL/glu.h>
 #include "VSXuRenderer.h"
@@ -40,16 +41,16 @@ VSXuRenderer::VSXuRenderer(VSXuWidget* parent):
 
 QStringList VSXuRenderer::getVisuals()
 {
-  QStringList result;
-  if(!m_manager)
-    return result;
-  
-  std::vector<std::string> visuals = m_manager->get_visual_filenames();
-  for(std::vector<std::string>::iterator it = visuals.begin(); it < visuals.end() ; it++){
-    result<< QFileInfo( QString::fromStdString(*it)).fileName().replace(".vsx","");
-  }
+    QStringList result;
+    if(!m_manager)
+      return result;
 
-  return result;
+    std::vector<std::string> visuals = m_manager->get_visual_filenames();
+    for(std::vector<std::string>::iterator it = visuals.begin(); it < visuals.end() ; it++){
+      result<< QFileInfo( QString::fromStdString(*it)).fileName().replace(".vsx","");
+    }
+
+    return result;
 }
 
 
@@ -71,6 +72,46 @@ void VSXuRenderer::injectSound(float soundData[])
   */
 }
 
+void VSXuRenderer::drawSplashScreen()
+{
+    QImage splash = QGLWidget::convertToGLFormat(QImage(":luna.png"));
+
+    glEnable(GL_TEXTURE_2D);
+    GLuint texture_splash;
+    glGenTextures(1,&texture_splash);
+    glBindTexture(GL_TEXTURE_2D, texture_splash);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3 , splash.width(), splash.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,splash.bits());
+
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    glViewport(-m_width/4, -m_height/4, m_width, m_height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glBegin(GL_TRIANGLE_STRIP);
+      glTexCoord2f(0.0, 0.0);
+      glVertex2f(0.0,0.0);
+
+      glTexCoord2f(0.0, 1.0);
+      glVertex2f(0.0,1.0);
+
+      glTexCoord2f(1.0, 0.0);
+      glVertex2f(1.0,0.0);
+
+      glTexCoord2f(1.0, 1.0);
+      glVertex2f(1.0,1.0);
+
+    glEnd();
+
+    m_widget->swapBuffers();
+}
+
 
 void VSXuRenderer::run()
 {
@@ -83,14 +124,13 @@ void VSXuRenderer::run()
     glEnable(GL_POLYGON_SMOOTH);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // A nice black screen till VSXu actually loads itself
-    glClearColor(0,0,0,0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // A nice splash screen till VSXu actually loads itself
+    drawSplashScreen();
 
     m_manager = manager_factory();
     m_manager->init(0,"pulseaudio");
     //for manual sound injection, use: manager->init( path.c_str() , "media_player");
-    m_widget->swapBuffers();
+
 
     while (m_isRunning){
       if(!m_isActive){
