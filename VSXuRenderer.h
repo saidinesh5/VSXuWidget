@@ -51,14 +51,26 @@ public:
     void nextVisual(){ if(m_manager)m_manager->next_visual(); }
     void prevVisual(){ if(m_manager)m_manager->prev_visual(); }
 
-    bool getRandomizerStatus(){ if(m_manager)m_manager->get_randomizer_status(); }
+    bool getRandomizerStatus(){
+      if(m_manager)
+        return m_manager->get_randomizer_status();
+      return false;
+    }
     void setRandomizer(bool value){ if(m_manager)m_manager->set_randomizer(value); }
 
-    float getFXLevel(){ if(m_manager)m_manager->get_fx_level(); }
+    float getFXLevel(){
+      if(m_manager)
+        return m_manager->get_fx_level();
+      return -1;
+    }
     void increaseFXLevel(){ if(m_manager)m_manager->inc_fx_level(); }
     void decreaseFXLevel(){ if(m_manager)m_manager->dec_fx_level(); }
 
-    float getSpeed(){ if(m_manager)m_manager->get_speed();}
+    float getSpeed(){
+      if(m_manager)
+        return m_manager->get_speed();
+      return -1;
+    }
     void increaseSpeed(){ if(m_manager)m_manager->inc_speed();}
     void decreaseSpeed(){ if(m_manager)m_manager->dec_speed();}
 

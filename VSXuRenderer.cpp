@@ -75,6 +75,7 @@ void VSXuRenderer::injectSound(float soundData[])
 void VSXuRenderer::drawSplashScreen()
 {
     QImage splash = QGLWidget::convertToGLFormat(QImage(":luna.png"));
+    int edge = m_width > m_height? m_height:m_width;
 
     glEnable(GL_TEXTURE_2D);
     GLuint texture_splash;
@@ -85,15 +86,15 @@ void VSXuRenderer::drawSplashScreen()
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-    glViewport(-m_width/4, -m_height/4, m_width, m_height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glViewport((m_width-edge)/2, (m_height-edge)/2, edge, edge);
 
     glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
-
+    glTranslatef(-0.5,-0.5,0);
     glBegin(GL_TRIANGLE_STRIP);
       glTexCoord2f(0.0, 0.0);
       glVertex2f(0.0,0.0);
