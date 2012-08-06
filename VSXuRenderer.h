@@ -30,16 +30,18 @@ class VSXuWidget;
 class VSXuRenderer: public QThread
 {
   Q_OBJECT
-  
+
     vsx_manager_abs *m_manager;
     VSXuWidget *m_widget;
     bool m_isRunning, m_doResize, m_isActive;
     int m_width,m_height;
     float m_soundData[512];
+    int m_previousError;
 
     //The Main Loop for VSXu Renderer
     void run();
     void drawSplashScreen();
+    bool processErrors();
 
 public:
     VSXuRenderer(VSXuWidget* parent);
@@ -78,6 +80,7 @@ public:
 
     void resize(int w, int h);
     void injectSound(float soundData[]);
+
 };
 
 #endif // VSXURENDERER_H

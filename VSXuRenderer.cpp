@@ -22,6 +22,7 @@
 
 #include <QFileInfo>
 #include <QImage>
+#include <QDebug>
 
 #include <GL/glu.h>
 #include "VSXuRenderer.h"
@@ -34,7 +35,8 @@ VSXuRenderer::VSXuRenderer(VSXuWidget* parent):
   m_doResize(true),
   m_isActive(true),
   m_width(640),
-  m_height(480)
+  m_height(480),
+  m_previousError(0)
 {
 
 }
@@ -113,6 +115,22 @@ void VSXuRenderer::drawSplashScreen()
     m_widget->swapBuffers();
 }
 
+bool VSXuRenderer::processErrors()
+{
+    int error = glGetError();
+    if(error){
+	if(m_previousError != error){
+	  m_previousError = error;
+	  qDebug()<<"Error :"<<error;
+	  if(m_manager)
+	      qDebug()<<"Visual :"<<m_manager->get_meta_visual_filename().c_str();
+	  qDebug()<<"Widget is valid?"<<m_widget->isValid();
+	}
+	return true;
+    }
+    m_previousError = 0;
+    return false;
+}
 
 void VSXuRenderer::run()
 {
@@ -127,11 +145,12 @@ void VSXuRenderer::run()
 
     // A nice splash screen till VSXu actually loads itself
     drawSplashScreen();
+    qDebug()<< m_widget->format();
 
+    processErrors();
     m_manager = manager_factory();
     m_manager->init(0,"pulseaudio");
     //for manual sound injection, use: manager->init( path.c_str() , "media_player");
-
 
     while (m_isRunning){
       if(!m_isActive){
@@ -140,6 +159,7 @@ void VSXuRenderer::run()
         msleep(10);
         continue;
       }
+      processErrors();
       m_widget->makeCurrent();
       if (m_doResize){
           glViewport(0, 0, m_width, m_height);
